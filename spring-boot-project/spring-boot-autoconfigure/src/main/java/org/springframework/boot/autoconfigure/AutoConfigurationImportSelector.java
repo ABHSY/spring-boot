@@ -90,6 +90,9 @@ public class AutoConfigurationImportSelector
 
 	private ResourceLoader resourceLoader;
 
+	// ImportSelector 的接口 这个是入口
+	// selectImports方法的返回值，必须是一个class（全称），该class会被spring容器所托管起来
+	//类似于 new String[]{"com.ABHSY.service.imp.bean.User",People.class.getName(),MyConfig.class.getName()}
 	@Override
 	public String[] selectImports(AnnotationMetadata annotationMetadata) {
 		if (!isEnabled(annotationMetadata)) {
@@ -97,6 +100,7 @@ public class AutoConfigurationImportSelector
 		}
 		AutoConfigurationMetadata autoConfigurationMetadata = AutoConfigurationMetadataLoader
 				.loadMetadata(this.beanClassLoader);
+		//
 		AutoConfigurationEntry autoConfigurationEntry = getAutoConfigurationEntry(
 				autoConfigurationMetadata, annotationMetadata);
 		return StringUtils.toStringArray(autoConfigurationEntry.getConfigurations());
@@ -116,6 +120,8 @@ public class AutoConfigurationImportSelector
 			return EMPTY_ENTRY;
 		}
 		AnnotationAttributes attributes = getAttributes(annotationMetadata);
+		//这就是所谓的自动配置
+		//拿到 EnableAutoConfiguration 的 META-INF/spring.factories 里面的class 全称
 		List<String> configurations = getCandidateConfigurations(annotationMetadata,
 				attributes);
 		configurations = removeDuplicates(configurations);
@@ -176,8 +182,10 @@ public class AutoConfigurationImportSelector
 	 * attributes}
 	 * @return a list of candidate configurations
 	 */
+	// 获得符合条件的配置类的数组
 	protected List<String> getCandidateConfigurations(AnnotationMetadata metadata,
 			AnnotationAttributes attributes) {
+		// <1> 加载指定类型 EnableAutoConfiguration 对应的，在 `META-INF/spring.factories` 里的类名的数组
 		List<String> configurations = SpringFactoriesLoader.loadFactoryNames(
 				getSpringFactoriesLoaderFactoryClass(), getBeanClassLoader());
 		Assert.notEmpty(configurations,

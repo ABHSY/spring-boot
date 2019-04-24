@@ -183,6 +183,8 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		ServletContext servletContext = getServletContext();
 		// <1> 如果 webServer 为空，说明未初始化
 		if (webServer == null && servletContext == null) {
+			// <1.2> 获得 ServletContextInitializer 对象
+			// <1.3> 创建（获得） WebServer 对象
 			ServletWebServerFactory factory = getWebServerFactory();
 			this.webServer = factory.getWebServer(getSelfInitializer());
 		}

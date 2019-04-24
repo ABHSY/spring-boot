@@ -130,18 +130,23 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 */
 	@Override
 	protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+		// <1.1> 注册 WebApplicationContextServletContextAwareProcessor
 		beanFactory.addBeanPostProcessor(
 				new WebApplicationContextServletContextAwareProcessor(this));
+		// <1.2> 忽略 ServletContextAware 接口。
 		beanFactory.ignoreDependencyInterface(ServletContextAware.class);
+		// <2> 注册 ExistingWebApplicationScopes
 		registerWebApplicationScopes();
 	}
 
 	@Override
 	public final void refresh() throws BeansException, IllegalStateException {
 		try {
+			// 获得 WebServer 对象，避免被多线程修改了
 			super.refresh();
 		}
 		catch (RuntimeException ex) {
+			// 置空 webServer
 			stopAndReleaseWebServer();
 			throw ex;
 		}
@@ -176,6 +181,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	private void createWebServer() {
 		WebServer webServer = this.webServer;
 		ServletContext servletContext = getServletContext();
+		// <1> 如果 webServer 为空，说明未初始化
 		if (webServer == null && servletContext == null) {
 			ServletWebServerFactory factory = getWebServerFactory();
 			this.webServer = factory.getWebServer(getSelfInitializer());

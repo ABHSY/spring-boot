@@ -46,6 +46,10 @@ import org.springframework.core.type.classreading.MetadataReaderFactory;
  * @author Phillip Webb
  * @since 1.4.0
  */
+
+//实现 ApplicationContextInitializer、Ordered 接口，
+// 它会创建一个用于在 ConfigurationClassPostProcessor 和 Spring Boot
+// 间共享的 CachingMetadataReaderFactory Bean 对象。
 class SharedMetadataReaderFactoryContextInitializer implements
 		ApplicationContextInitializer<ConfigurableApplicationContext>, Ordered {
 

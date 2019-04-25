@@ -413,7 +413,10 @@ public class SpringApplication {
 		context.setEnvironment(environment);
 		// <2> 设置 context 的一些属性
 		postProcessApplicationContext(context);
-		// <3> 初始化 ApplicationContextInitializer  调用 initializer 方法
+		// <3> 初始化 ApplicationContextInitializer
+		//逐个调用 ApplicationContextInitializer 的初始化方法   军哥框架中用到了
+		//都是实现了 ApplicationContextInitializer  这个类
+		//DelegatingApplicationContextInitializer  例子类
 		applyInitializers(context);
 		// <4> 通知 SpringApplicationRunListener 的数组，Spring 容器准备完成
 		listeners.contextPrepared(context);

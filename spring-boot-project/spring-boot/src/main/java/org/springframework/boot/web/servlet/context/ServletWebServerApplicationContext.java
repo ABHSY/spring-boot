@@ -102,9 +102,11 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 * {@link ServletRegistrationBean} or a different bean name.
 	 */
 	public static final String DISPATCHER_SERVLET_NAME = "dispatcherServlet";
-	//Spring  WebServer 对象
+
+	// Spring WebServer 对象
 	private volatile WebServer webServer;
-	//Servlet ServletConfig 对象
+
+	// Servlet ServletConfig 对象
 	private ServletConfig servletConfig;
 
 	private String serverNamespace;
@@ -130,7 +132,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 */
 	@Override
 	protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-		//<1.1> 处，注册 WebApplicationContextServletContextAwareProcessor。
+		// <1.1> 处，注册 WebApplicationContextServletContextAwareProcessor。
 		// WebApplicationContextServletContextAwareProcessor 的作用，
 		// 主要是处理实现 ServletContextAware 接口的 Bean 。
 		// 在这个处理类，初始化这个 Bean 中的 ServletContext 属性，
@@ -229,9 +231,10 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 							+ StringUtils.arrayToCommaDelimitedString(beanNames));
 		}
 		// 获得 ServletWebServerFactory 类型对应的 Bean 对象
-		//默认情况下，此处返回的会是 org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory 对象。
+		// 默认情况下，此处返回的会是
+		// org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory 对象。
 		return getBeanFactory().getBean(beanNames[0], ServletWebServerFactory.class);
-		//在我们引入 spring-boot-starter-web 依赖时，默认会引入 spring-boot-starter-tomcat 依赖。此时
+		// 在我们引入 spring-boot-starter-web 依赖时，默认会引入 spring-boot-starter-tomcat 依赖。此时
 		// org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryConfiguration
 		// 在自动配置时，会配置出 TomcatServletWebServerFactory Bean 对象。
 		// 因此，此时会获得 TomcatServletWebServerFactory 对象。
@@ -252,7 +255,8 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		prepareWebApplicationContext(servletContext);
 		// <2> 注册 ServletContextScope
 		registerApplicationScope(servletContext);
-		// <3> 注册 web-specific environment beans ("contextParameters", "contextAttributes")
+		// <3> 注册 web-specific environment beans ("contextParameters",
+		// "contextAttributes")
 		WebApplicationContextUtils.registerEnvironmentBeans(getBeanFactory(),
 				servletContext);
 		// <4> 获得所有 ServletContextInitializer ，并逐个进行启动
@@ -314,7 +318,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 		servletContext.log("Initializing Spring embedded WebApplicationContext");
 		try {
 			// <X> 设置当前 Spring 容器到 ServletContext 中
-			//从 servletContext 的属性种，可以拿到其拥有的 Spring 容器
+			// 从 servletContext 的属性种，可以拿到其拥有的 Spring 容器
 			servletContext.setAttribute(
 					WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this);
 			if (logger.isDebugEnabled()) {
@@ -324,7 +328,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 								+ "]");
 			}
 			// <Y> 设置到 `servletContext` 属性中。
-			//Spring 容器的 servletContext 属性，可以拿到 ServletContext 对象。
+			// Spring 容器的 servletContext 属性，可以拿到 ServletContext 对象。
 			setServletContext(servletContext);
 			if (logger.isInfoEnabled()) {
 				long elapsedTime = System.currentTimeMillis() - getStartupDate();
@@ -332,7 +336,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 						+ elapsedTime + " ms");
 			}
 		}
-		//借鉴
+		// 借鉴
 		catch (RuntimeException | Error ex) {
 			logger.error("Context initialization failed", ex);
 			servletContext.setAttribute(

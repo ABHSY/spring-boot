@@ -32,7 +32,7 @@ import org.springframework.web.context.support.ServletContextAwareProcessor;
  * @author Phillip Webb
  */
 public class WebApplicationContextServletContextAwareProcessor
-	//处，忽略 ServletContextAware 接口，因为实现 ServletContextAware 接口的 Bean 在 <1.1>
+		// 处，忽略 ServletContextAware 接口，因为实现 ServletContextAware 接口的 Bean 在 <1.1>
 		// 中的 WebApplicationContextServletContextAwareProcessor 中已经处理了。
 		extends ServletContextAwareProcessor {
 

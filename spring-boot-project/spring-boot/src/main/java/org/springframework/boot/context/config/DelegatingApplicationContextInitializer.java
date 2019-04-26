@@ -51,7 +51,7 @@ public class DelegatingApplicationContextInitializer implements
 	public void initialize(ConfigurableApplicationContext context) {
 		// <1> 获得环境变量配置的 ApplicationContextInitializer 集合们
 		ConfigurableEnvironment environment = context.getEnvironment();
-		//拿到 getInitializerClasses
+		// 拿到 getInitializerClasses
 		List<Class<?>> initializerClasses = getInitializerClasses(environment);
 		// 如果非空，则进行初始化
 		if (!initializerClasses.isEmpty()) {
@@ -108,7 +108,8 @@ public class DelegatingApplicationContextInitializer implements
 								+ "from the type of application context used by this "
 								+ "context loader [%s]: ",
 						initializerClass.getName(), requireContextClass.getName(),
-						contextClass.getName()));//为了加载成对象放进去 执行
+						contextClass.getName()));
+		// 为了加载成对象放进去 执行
 		return (ApplicationContextInitializer<?>) BeanUtils
 				.instantiateClass(initializerClass);
 	}

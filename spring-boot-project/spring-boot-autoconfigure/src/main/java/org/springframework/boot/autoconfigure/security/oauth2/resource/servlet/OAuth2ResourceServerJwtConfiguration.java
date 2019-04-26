@@ -53,7 +53,8 @@ class OAuth2ResourceServerJwtConfiguration {
 	@ConditionalOnMissingBean
 	public JwtDecoder jwtDecoderByJwkKeySetUri() {
 		return NimbusJwtDecoder.withJwkSetUri(this.properties.getJwkSetUri())
-				.jwsAlgorithm(this.properties.getJwsAlgorithm()).build();
+//				.jwsAlgorithm(this.properties.getJwsAlgorithm()).build();
+				.jwsAlgorithm(null).build();
 	}
 
 	@Bean

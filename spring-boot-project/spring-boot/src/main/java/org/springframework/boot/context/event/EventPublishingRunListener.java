@@ -42,7 +42,7 @@ import org.springframework.util.ErrorHandler;
  * @author Andy Wilkinson
  * @author Artsiom Yudovin
  */
-//我们认为 EventPublishingRunListener 是一个“转换器”。
+// 我们认为 EventPublishingRunListener 是一个“转换器”。
 public class EventPublishingRunListener implements SpringApplicationRunListener, Ordered {
 
 	private final SpringApplication application;
@@ -57,8 +57,8 @@ public class EventPublishingRunListener implements SpringApplicationRunListener,
 		// 创建 SimpleApplicationEventMulticaster 对象
 		this.initialMulticaster = new SimpleApplicationEventMulticaster();
 		// 添加应用的监听器们，到 initialMulticaster 中
-		//看 SpringApplication getRunListeners 方法的
-		//Factories 配置的 SpringApplicationRunListener.class 然后放到  initialMulticaster 中去了
+		// 看 SpringApplication getRunListeners 方法的
+		// Factories 配置的 SpringApplicationRunListener.class 然后放到 initialMulticaster 中去了
 		for (ApplicationListener<?> listener : application.getListeners()) {
 			this.initialMulticaster.addApplicationListener(listener);
 		}

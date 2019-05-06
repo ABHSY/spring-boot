@@ -60,7 +60,9 @@ public class ServerPortInfoApplicationContextInitializer
 
 	@Override
 	public void onApplicationEvent(WebServerInitializedEvent event) {
+		// <1> 获得属性名
 		String propertyName = "local." + getName(event.getApplicationContext()) + ".port";
+		// <2> 设置端口到 environment 的 propertyName 中
 		setPortProperty(event.getApplicationContext(), propertyName,
 				event.getWebServer().getPort());
 	}
@@ -72,10 +74,12 @@ public class ServerPortInfoApplicationContextInitializer
 
 	private void setPortProperty(ApplicationContext context, String propertyName,
 			int port) {
+		// 设置端口到 environment 的 propertyName 中
 		if (context instanceof ConfigurableApplicationContext) {
 			setPortProperty(((ConfigurableApplicationContext) context).getEnvironment(),
 					propertyName, port);
 		}
+		// 如果有父容器，则继续设置
 		if (context.getParent() != null) {
 			setPortProperty(context.getParent(), propertyName, port);
 		}
@@ -85,6 +89,7 @@ public class ServerPortInfoApplicationContextInitializer
 	private void setPortProperty(ConfigurableEnvironment environment, String propertyName,
 			int port) {
 		MutablePropertySources sources = environment.getPropertySources();
+		// 获得 "server.ports" 属性对应的值
 		PropertySource<?> source = sources.get("server.ports");
 		if (source == null) {
 			source = new MapPropertySource("server.ports", new HashMap<>());

@@ -162,10 +162,12 @@ public class ConfigFileApplicationListener
 
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
+		// <1> 如果是 ApplicationEnvironmentPreparedEvent 事件，说明 Spring 环境准备好了，则执行相应的处理
 		if (event instanceof ApplicationEnvironmentPreparedEvent) {
 			onApplicationEnvironmentPreparedEvent(
 					(ApplicationEnvironmentPreparedEvent) event);
 		}
+		// <2> 如果是 ApplicationPreparedEvent 事件，说明 Spring 容器初始化好了，则进行相应的处理。
 		if (event instanceof ApplicationPreparedEvent) {
 			onApplicationPreparedEvent(event);
 		}
@@ -173,9 +175,13 @@ public class ConfigFileApplicationListener
 
 	private void onApplicationEnvironmentPreparedEvent(
 			ApplicationEnvironmentPreparedEvent event) {
+		// <1.1> 加载指定类型 EnvironmentPostProcessor 对应的，在 `META-INF/spring.factories` 里的类名的数组
 		List<EnvironmentPostProcessor> postProcessors = loadPostProcessors();
+		// 加入自己
 		postProcessors.add(this);
+		// 排序 postProcessors 数组
 		AnnotationAwareOrderComparator.sort(postProcessors);
+		// 遍历 postProcessors 数组，逐个执行。
 		for (EnvironmentPostProcessor postProcessor : postProcessors) {
 			postProcessor.postProcessEnvironment(event.getEnvironment(),
 					event.getSpringApplication());
@@ -194,7 +200,9 @@ public class ConfigFileApplicationListener
 	}
 
 	private void onApplicationPreparedEvent(ApplicationEvent event) {
+		// 修改 logger 文件，暂时可以无视。
 		this.logger.switchTo(ConfigFileApplicationListener.class);
+		// 添加 PropertySourceOrderingPostProcessor 处理器
 		addPostProcessors(((ApplicationPreparedEvent) event).getApplicationContext());
 	}
 
@@ -256,6 +264,9 @@ public class ConfigFileApplicationListener
 	 * {@link BeanFactoryPostProcessor} to re-order our property sources below any
 	 * {@code @PropertySource} items added by the {@link ConfigurationClassPostProcessor}.
 	 */
+//	PropertySourceOrderingPostProcessor ，是 ConfigFileApplicationListener 内部类，
+//	实现 BeanFactoryPostProcessor、Ordered 接口，将 DEFAULT_PROPERTIES 的
+//	PropertySource 属性源，添加到 environment 的尾部。
 	private class PropertySourceOrderingPostProcessor
 			implements BeanFactoryPostProcessor, Ordered {
 
@@ -277,8 +288,10 @@ public class ConfigFileApplicationListener
 		}
 
 		private void reorderSources(ConfigurableEnvironment environment) {
+			// 移除 DEFAULT_PROPERTIES 的属性源
 			PropertySource<?> defaultProperties = environment.getPropertySources()
 					.remove(DEFAULT_PROPERTIES);
+			// 添加到 environment 尾部
 			if (defaultProperties != null) {
 				environment.getPropertySources().addLast(defaultProperties);
 			}

@@ -142,8 +142,11 @@ public class ConfigurationWarningsApplicationContextInitializer
 
 		@Override
 		public String getWarning(BeanDefinitionRegistry registry) {
+			// <1> 获得要扫描的包
 			Set<String> scannedPackages = getComponentScanningPackages(registry);
+			// <2> 获得要扫描的包中，有问题的包
 			List<String> problematicPackages = getProblematicPackages(scannedPackages);
+			// <3.1> 如果 problematicPackages 为空，说明不存在问题
 			if (problematicPackages.isEmpty()) {
 				return null;
 			}
@@ -155,12 +158,16 @@ public class ConfigurationWarningsApplicationContextInitializer
 
 		protected Set<String> getComponentScanningPackages(
 				BeanDefinitionRegistry registry) {
+			// 扫描的包的集合
 			Set<String> packages = new LinkedHashSet<>();
+			// 获得所有 BeanDefinition 的名字们
 			String[] names = registry.getBeanDefinitionNames();
 			for (String name : names) {
+				// 如果是 AnnotatedBeanDefinition
 				BeanDefinition definition = registry.getBeanDefinition(name);
 				if (definition instanceof AnnotatedBeanDefinition) {
 					AnnotatedBeanDefinition annotatedDefinition = (AnnotatedBeanDefinition) definition;
+					// 如果有 @ComponentScan 注解，则添加到 packages 中
 					addComponentScanningPackages(packages,
 							annotatedDefinition.getMetadata());
 				}
@@ -170,8 +177,10 @@ public class ConfigurationWarningsApplicationContextInitializer
 
 		private void addComponentScanningPackages(Set<String> packages,
 				AnnotationMetadata metadata) {
+			// 获得 @ComponentScan 注解
 			AnnotationAttributes attributes = AnnotationAttributes.fromMap(metadata
 					.getAnnotationAttributes(ComponentScan.class.getName(), true));
+			// 如果存在，则添加到 packages 中
 			if (attributes != null) {
 				addPackages(packages, attributes.getStringArray("value"));
 				addPackages(packages, attributes.getStringArray("basePackages"));

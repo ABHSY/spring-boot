@@ -194,20 +194,25 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
+		// 在 Spring Boot 应用启动的时候
 		if (event instanceof ApplicationStartingEvent) {
 			onApplicationStartingEvent((ApplicationStartingEvent) event);
 		}
+		// 在 Spring Boot 的 Environment 环境准备完成的时候
 		else if (event instanceof ApplicationEnvironmentPreparedEvent) {
 			onApplicationEnvironmentPreparedEvent(
 					(ApplicationEnvironmentPreparedEvent) event);
 		}
+		// 在 Spring Boot 容器的准备工作已经完成（并未启动）的时候
 		else if (event instanceof ApplicationPreparedEvent) {
 			onApplicationPreparedEvent((ApplicationPreparedEvent) event);
 		}
+		// 在 Spring Boot 容器关闭的时候
 		else if (event instanceof ContextClosedEvent && ((ContextClosedEvent) event)
 				.getApplicationContext().getParent() == null) {
 			onContextClosedEvent();
 		}
+		// 在 Spring Boot 容器启动失败的时候
 		else if (event instanceof ApplicationFailedEvent) {
 			onApplicationFailedEvent();
 		}
@@ -222,9 +227,11 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 	private void onApplicationEnvironmentPreparedEvent(
 			ApplicationEnvironmentPreparedEvent event) {
 		if (this.loggingSystem == null) {
+			//创建 LoggingSystem 对象
 			this.loggingSystem = LoggingSystem
 					.get(event.getSpringApplication().getClassLoader());
 		}
+		//初始化
 		initialize(event.getEnvironment(), event.getSpringApplication().getClassLoader());
 	}
 
@@ -256,13 +263,18 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 	 */
 	protected void initialize(ConfigurableEnvironment environment,
 			ClassLoader classLoader) {
+		// <1> 初始化 LoggingSystemProperties 配置
 		new LoggingSystemProperties(environment).apply();
 		LogFile logFile = LogFile.get(environment);
 		if (logFile != null) {
+			// <2> 初始化 LogFile
 			logFile.applyToSystemProperties();
 		}
+		// <3> 初始化早期的 Spring Boot Logging 级别
 		initializeEarlyLoggingLevel(environment);
+		// <4> 初始化 LoggingSystem 日志系统
 		initializeSystem(environment, this.loggingSystem, logFile);
+		// <5> 初始化最终的 Spring Boot Logging 级别
 		initializeFinalLoggingLevels(environment, this.loggingSystem);
 		registerShutdownHookIfNecessary(environment, this.loggingSystem);
 	}
@@ -285,12 +297,16 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 
 	private void initializeSystem(ConfigurableEnvironment environment,
 			LoggingSystem system, LogFile logFile) {
+		// 创建 LoggingInitializationContext 对象
 		LoggingInitializationContext initializationContext = new LoggingInitializationContext(
 				environment);
+		// 获得日志组件的配置文件
 		String logConfig = environment.getProperty(CONFIG_PROPERTY);
+		// 如果没配置，则直接初始化 LoggingSystem
 		if (ignoreLogConfig(logConfig)) {
 			system.initialize(initializationContext, null, logFile);
 		}
+		//如果有配置，先尝试加载指定配置文件，然后在初始化 LoggingSystem
 		else {
 			try {
 				ResourceUtils.getURL(logConfig).openStream().close();

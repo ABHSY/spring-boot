@@ -60,17 +60,21 @@ public enum WebApplicationType {
 
 	private static final String REACTIVE_APPLICATION_CONTEXT_CLASS = "org.springframework.boot.web.reactive.context.ReactiveWebApplicationContext";
 
+	//枚举中方法获得 application 类型。 聪明
 	static WebApplicationType deduceFromClasspath() {
+		//DispatcherHandler 存在但是   DispatcherServlet 不存在。代表使用的为 WebFlux
 		if (ClassUtils.isPresent(WEBFLUX_INDICATOR_CLASS, null)
 				&& !ClassUtils.isPresent(WEBMVC_INDICATOR_CLASS, null)
 				&& !ClassUtils.isPresent(JERSEY_INDICATOR_CLASS, null)) {
 			return WebApplicationType.REACTIVE;
 		}
+		//当Servlet 跟 ConfigurableWebApplicationContext  都不存在就是NONE 这两个类是 mvc 必备的类
 		for (String className : SERVLET_INDICATOR_CLASSES) {
 			if (!ClassUtils.isPresent(className, null)) {
 				return WebApplicationType.NONE;
 			}
 		}
+		// SERVLET
 		return WebApplicationType.SERVLET;
 	}
 

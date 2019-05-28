@@ -34,6 +34,8 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
  */
 public interface SpringApplicationRunListener {
 
+	//非常重要的一点 构造参数必须是  SpringApplication application, String[] args
+
 	/**
 	 * Called immediately when the run method has first started. Can be used for very
 	 * early initialization.
@@ -46,6 +48,7 @@ public interface SpringApplicationRunListener {
 	 * {@link ApplicationContext} has been created.
 	 * @param environment the environment
 	 */
+	//ConfigurableEnvironment  准备好了 允许调整
 	default void environmentPrepared(ConfigurableEnvironment environment) {
 	}
 
@@ -54,6 +57,7 @@ public interface SpringApplicationRunListener {
 	 * before sources have been loaded.
 	 * @param context the application context
 	 */
+	//ConfigurableApplicationContext  准备好了 允许调整
 	default void contextPrepared(ConfigurableApplicationContext context) {
 	}
 
@@ -62,6 +66,7 @@ public interface SpringApplicationRunListener {
 	 * refreshed.
 	 * @param context the application context
 	 */
+	//ConfigurableApplicationContext  已经装载 但是还没有启动
 	default void contextLoaded(ConfigurableApplicationContext context) {
 	}
 
@@ -72,6 +77,7 @@ public interface SpringApplicationRunListener {
 	 * @param context the application context.
 	 * @since 2.0.0
 	 */
+	//ConfigurableApplicationContext 已经启动  springBean 已经初始化完成
 	default void started(ConfigurableApplicationContext context) {
 	}
 
@@ -82,6 +88,7 @@ public interface SpringApplicationRunListener {
 	 * @param context the application context.
 	 * @since 2.0.0
 	 */
+	//spring 正在运行
 	default void running(ConfigurableApplicationContext context) {
 	}
 
@@ -92,6 +99,7 @@ public interface SpringApplicationRunListener {
 	 * @param exception the failure
 	 * @since 2.0.0
 	 */
+	//失败
 	default void failed(ConfigurableApplicationContext context, Throwable exception) {
 	}
 

@@ -271,16 +271,21 @@ public class SpringApplication {
 		this.resourceLoader = resourceLoader;
 		Assert.notNull(primarySources, "PrimarySources must not be null");
 		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
+		//推断web应用类
 		this.webApplicationType = WebApplicationType.deduceFromClasspath();
 		// 初始化 initializers 属性
 		// 获得 Factories 文件内容 set到Initializers中
-		// getSpringFactoriesInstances == (第二个参数) 加载指定类型对应的，在 `META-INF/spring.factories`
-		// 里的类名的数组
+		// getSpringFactoriesInstances == (第二个参数) 加载指定类型对应的，在 `META-INF/spring.factories`里的类名的数组
+		//加载spring应用上下文初始化器  不紧紧拿到对象 并且还将对面进行了初始化
+		// 军哥的discory框架的初始化策略就是通过 实现 ApplicationContextInitializer 的初始化方式
+		//下面是军哥的代码  ---> 看过的源码  老忘 记录
+		//public abstract class PluginApplicationContextInitializer implements
+		// ApplicationContextInitializer<ConfigurableApplicationContext> {
 		setInitializers((Collection) getSpringFactoriesInstances(
 				ApplicationContextInitializer.class));
-		// 初始化 listeners 属性
+		// 初始化 listeners 属性   加载spring应用事件监听器
 		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
-		// 这个就是拿到当前执行main方法的class
+		// 推断应用引导类
 		this.mainApplicationClass = deduceMainApplicationClass();
 	}
 
@@ -320,6 +325,7 @@ public class SpringApplication {
 		configureHeadlessProperty();
 		// 获得 SpringApplicationRunListener 的数组，并启动监听
 		SpringApplicationRunListeners listeners = getRunListeners(args);
+		//启动 在在getRunListeners中 的构造参数中已经初始化好了List<SpringApplicationRunListener>
 		listeners.starting();
 		try {
 			// <3> 创建 ApplicationArguments 对象
@@ -485,6 +491,7 @@ public class SpringApplication {
 		return getSpringFactoriesInstances(type, new Class<?>[] {});
 	}
 
+	//ApplicationContextInitializer   springapplication初始化的时候
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type,
 			Class<?>[] parameterTypes, Object... args) {
 		ClassLoader classLoader = getClassLoader();

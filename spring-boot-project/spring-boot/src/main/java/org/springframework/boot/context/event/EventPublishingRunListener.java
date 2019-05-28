@@ -43,6 +43,7 @@ import org.springframework.util.ErrorHandler;
  * @author Artsiom Yudovin
  */
 // 我们认为 EventPublishingRunListener 是一个“转换器”。
+//监听这 会触发很多事件
 public class EventPublishingRunListener implements SpringApplicationRunListener, Ordered {
 
 	private final SpringApplication application;

@@ -370,11 +370,11 @@ public class SpringApplication {
 		}
 
 		try {
-			// <15> 通知 SpringApplicationRunListener 的数组，Spring 容器运行中。
+			//通知 SpringApplicationRunListener 的数组，Spring 容器运行中。
 			listeners.running(context);
 		}
 		catch (Throwable ex) {
-			// <15.1> 如果发生异常，则进行处理，并抛出 IllegalStateException 异常
+			//如果发生异常，则进行处理，并抛出 IllegalStateException 异常
 			handleRunFailure(context, ex, exceptionReporters, null);
 			throw new IllegalStateException(ex);
 		}
@@ -385,20 +385,20 @@ public class SpringApplication {
 			SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments) {
 		// Create and configure the environment
-		// <1> 创建 ConfigurableEnvironment 对象，并进行配置
+		//创建 ConfigurableEnvironment 对象，并进行配置
 		ConfigurableEnvironment environment = getOrCreateEnvironment();
 		// 配置 environment 变量
 		configureEnvironment(environment, applicationArguments.getSourceArgs());
-		// <2> 通知 SpringApplicationRunListener 的数组，环境变量已经准备完成。
+		//通知 SpringApplicationRunListener 的数组，环境变量已经准备完成。
 		listeners.environmentPrepared(environment);
-		// <3> 绑定 environment 到 SpringApplication 上
+		//绑定 environment 到 SpringApplication 上
 		bindToSpringApplication(environment);
-		// <4> 如果非自定义 environment ，则根据条件转换
+		//如果非自定义 environment ，则根据条件转换
 		if (!this.isCustomEnvironment) {
 			environment = new EnvironmentConverter(getClassLoader())
 					.convertEnvironmentIfNecessary(environment, deduceEnvironmentClass());
 		}
-		// <5> 如果有 attach 到 environment 上的 MutablePropertySources ，则添加到 environment 的
+		//如果有 attach 到 environment 上的 MutablePropertySources ，则添加到 environment 的
 		// PropertySource 中。
 		ConfigurationPropertySources.attach(environment);
 		return environment;

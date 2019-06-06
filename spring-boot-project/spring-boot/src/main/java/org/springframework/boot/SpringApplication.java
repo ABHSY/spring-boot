@@ -163,8 +163,7 @@ public class SpringApplication {
 	 * The class name of application context that will be used by default for non-web
 	 * environments.
 	 */
-	public static final String DEFAULT_CONTEXT_CLASS = "org.springframework.context."
-			+ "annotation.AnnotationConfigApplicationContext";
+	public static final String DEFAULT_CONTEXT_CLASS = "org.springframework.context.annotation.AnnotationConfigApplicationContext";
 
 	/**
 	 * The class name of application context that will be used by default for web
@@ -419,24 +418,24 @@ public class SpringApplication {
 	private void prepareContext(ConfigurableApplicationContext context,
 			ConfigurableEnvironment environment, SpringApplicationRunListeners listeners,
 			ApplicationArguments applicationArguments, Banner printedBanner) {
-		// <1> 设置 context 的 environment 属性
+		//设置 context 的 environment 属性
 		context.setEnvironment(environment);
-		// <2> 设置 context 的一些属性
+		//设置 context 的一些属性
 		postProcessApplicationContext(context);
-		// <3> 初始化 ApplicationContextInitializer
+		// 初始化 ApplicationContextInitializer
 		// 逐个调用 ApplicationContextInitializer 的初始化方法 军哥框架中用到了
 		// 都是实现了 ApplicationContextInitializer 这个类
 		// DelegatingApplicationContextInitializer 例子类
 		applyInitializers(context);
-		// <4> 通知 SpringApplicationRunListener 的数组，Spring 容器准备完成
+		// 通知 SpringApplicationRunListener 的数组，Spring 容器准备完成
 		listeners.contextPrepared(context);
-		// <5> 打印日志
+		// 打印日志
 		if (this.logStartupInfo) {
 			logStartupInfo(context.getParent() == null);
 			logStartupProfileInfo(context);
 		}
 		// Add boot specific singleton beans
-		// <6> 设置 beanFactory 的属性
+		// 设置 beanFactory 的属性
 		ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
 		beanFactory.registerSingleton("springApplicationArguments", applicationArguments);
 		if (printedBanner != null) {
@@ -453,16 +452,16 @@ public class SpringApplication {
 		// Load the sources
 		Set<Object> sources = getAllSources();
 		Assert.notEmpty(sources, "Sources must not be empty");
-		// <7> 加载 BeanDefinition 们
+		//加载 BeanDefinition 们
 		load(context, sources.toArray(new Object[0]));
-		// <8> 通知 SpringApplicationRunListener 的数组，Spring 容器加载完成。
+		//通知 SpringApplicationRunListener 的数组，Spring 容器加载完成。
 		listeners.contextLoaded(context);
 	}
 
 	private void refreshContext(ConfigurableApplicationContext context) {
-		// <1> 开启（刷新）Spring 容器
+		// 开启（刷新）Spring 容器
 		refresh(context);
-		// <2> 注册 ShutdownHook 钩子
+		// 注册 ShutdownHook 钩子
 		if (this.registerShutdownHook) {
 			try {
 				context.registerShutdownHook();
@@ -561,16 +560,16 @@ public class SpringApplication {
 	 */
 	protected void configureEnvironment(ConfigurableEnvironment environment,
 			String[] args) {
-		// <1.1> 设置 environment 的 conversionService 属性
+		// 设置 environment 的 conversionService 属性
 		if (this.addConversionService) {
 			ConversionService conversionService = ApplicationConversionService
 					.getSharedInstance();
 			environment.setConversionService(
 					(ConfigurableConversionService) conversionService);
 		}
-		// <1.2> 增加 environment 的 PropertySource 属性源
+		// 增加 environment 的 PropertySource 属性源
 		configurePropertySources(environment, args);
-		// <1.3> 配置 environment 的 activeProfiles 属性
+		//配置 environment 的 activeProfiles 属性
 		configureProfiles(environment, args);
 	}
 
